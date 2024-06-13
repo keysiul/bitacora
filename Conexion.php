@@ -9,7 +9,7 @@
 				die("Conection error");
 			}
 
-			$selBD = pg_query($this->conexion,"set search_path to $schema");            ;
+			$selBD = pg_query($this->conexion,"set search_path to $schema");
 
 			if(!$selBD){
 				die("Error accessing the database");
