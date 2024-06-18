@@ -4,81 +4,82 @@ require_once "../Model/FiscalesModel.php";
 
 header('Content-Type: application/json');
 $data = json_decode(file_get_contents('php://input'));
-$selection = $data->selection;
 $fiscalDAO = new FiscalesDAO();
 
-if($selection == "find" || $selection == "delete") $idFiscal = $data->idFiscal;
-else if($selection !="all")
+if ($_SERVER["REQUEST_METHOD"] == 'GET')
 {
-    if($selection == "update") $idFiscal = $data->idFiscal;
-    $RFC = $data->RFC;
-    $regimen = $data->regimen;
-    $direccion = $data->direccion;
-    $municipio = $data->municipio;
-    $cp = $data->cp;
-    $estado = $data->estado;
-    $pais = $data->pais;
+    if (isset($_GET['idfiscal']))
+    {
+        header("HTTP/1.1 200 OK");
+        $fiscal = new FiscalesModel(
+            $_GET['idfiscal'],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        );
+        echo json_encode($fiscalDAO->getFiscal($fiscal), JSON_UNESCAPED_UNICODE);
+        exit();
+    }
+    else
+    {
+        header("HTTP/1.1 200 OK");
+        echo json_encode($fiscalDAO->listFiscales(),JSON_UNESCAPED_UNICODE);
+        exit();
+    }
 }
-
-switch($selection)
+if($_SERVER["REQUEST_METHOD"] == 'POST')
 {
-    case "insert" : $fiscal = new FiscalesModel(
-                        0,
-                        $RFC,
-                        $regimen,
-                        $direccion,
-                        $municipio,
-                        $cp,
-                        $estado,
-                        $pais,
-                    );
-                    $result = $fiscalDAO->insertFiscales($fiscal);
-                    echo (json_encode($result,JSON_UNESCAPED_UNICODE));
-                    break;
-    case "update" : $fiscal = new FiscalesModel(
-                        intval($idFiscal),
-                        $RFC,
-                        $regimen,
-                        $direccion,
-                        $municipio,
-                        $cp,
-                        $estado,
-                        $pais
-                    );
-                    //echo var_dump($fiscal);
-                    $result = $fiscalDAO->updateFiscales($fiscal);
-                    echo json_encode($result,JSON_UNESCAPED_UNICODE);
-                    break;
-    case "find" : $fiscal = new FiscalesModel(
-                            $idFiscal,
-                            null,
-                            null,
-                            null,
-                            null,
-                            null,
-                            null,
-                            null
-                        );
-                    $result = $fiscalDAO->getFiscal($fiscal);
-                    echo json_encode($result,JSON_UNESCAPED_UNICODE);
-                    break;
-    case "all" : $result = $fiscalDAO->listFiscales();
-                    echo json_encode($result,JSON_UNESCAPED_UNICODE);
-                    break;
-    case "delete" : $fiscal = new FiscalesModel(
-                                $idFiscal,
-                                null,
-                                null,
-                                null,
-                                null,
-                                null,
-                                null,
-                                null
-                            );
-                    echo json_encode($fiscalDAO->deleteFiscales($fiscal),JSON_UNESCAPED_UNICODE);
-                    break;
-    default : echo json_encode("No option selected",JSON_UNESCAPED_UNICODE);
-
+    $fiscal = new FiscalesModel(
+        0,
+        $data->RFC,
+        $data->regimen,
+        $data->direccion,
+        $data->municipio,
+        $data->cp,
+        $data->estado,
+        $data->pais
+    );
+    header("HTTP/1.1 200 OK");
+    echo json_encode($fiscalDAO->insertFiscales($fiscal),JSON_UNESCAPED_UNICODE);
+    exit();
 }
+if($_SERVER["REQUEST_METHOD"] == 'DELETE')
+{
+    $fiscal = new FiscalesModel(
+        $data->idFiscal,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+    );
+    header("HTTP/1.1 200 OK");
+    echo json_encode($fiscalDAO->deleteFiscales($fiscal),JSON_UNESCAPED_UNICODE);
+    exit();
+}
+if($_SERVER["REQUEST_METHOD"] == 'PUT')
+{
+    $fiscal = new FiscalesModel(
+        $data->idFiscal,
+        $data->RFC,
+        $data->regimen,
+        $data->direccion,
+        $data->municipio,
+        $data->cp,
+        $data->estado,
+        $data->pais
+    );
+    header("HTTP/1.1 200 OK");
+    echo json_encode($fiscalDAO->updateFiscales($fiscal),JSON_UNESCAPED_UNICODE);
+    exit();
+}
+header("HTTP/1.1 400 Bad Request");
+
 
 ?>
