@@ -60,7 +60,7 @@ class UsuarioDAO
                     $usuario->getApellidos(),
                     $usuario->getCorreo(),
                     $usuario->getPuesto(),
-                    $usuario->getIDUsuario()
+                    $usuario->getTipoUsuario()
         );
         $result = pg_query_params(self::getPGConnection(),$query,$params);
         if($result)

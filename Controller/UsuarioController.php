@@ -11,7 +11,7 @@ if($_SERVER["REQUEST_METHOD"] == 'GET')
     {
         header("HTTP/1.1 200 OK");
         $usuario = new UsuarioModel(
-                $data->idusuario,
+                $_GET["idusuario"],
                 '',
                 '',
                 '',
@@ -33,7 +33,7 @@ if($_SERVER["REQUEST_METHOD"] == 'POST')
 {
     header("HTTP/1.1 200 OK");
     $usuario = new UsuarioModel(
-        $data->idusuario,
+        0,
         password_hash($data->password,PASSWORD_BCRYPT),
         $data->nombre,
         $data->apellidos,
