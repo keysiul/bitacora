@@ -36,7 +36,7 @@ export default {
 
 <style>
 html {
-    background-color: #56baed;
+    background-color: #2a4388;
   }
 body {
     font-family: "Poppins", sans-serif;
@@ -78,7 +78,7 @@ body {
     background: #fff;
     padding: 30px;
     width: 90%;
-    max-width: 450px;
+    max-width: 500px;
     position: relative;
     padding: 0px;
     -webkit-box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);
@@ -143,7 +143,7 @@ body {
   }
   
   input[type=text] {
-    background-color: #f6f6f6;
+    background-color: #aceeff;
     border: none;
     color: #0d0d0d;
     padding: 15px 32px;
