@@ -35,22 +35,28 @@ class UsuarioDAO
         return $usuarios;
     }
 
-    public function getUsuario(UsuarioModel $usuario) : UsuarioModel {
+    public function getUsuario(UsuarioModel $usuario) {
         $usuarioFound = null;
         $query = "SELECT * FROM Usuario WHERE idusuario =$1";
         $params = array($usuario->getIDUsuario());
         $result = pg_query_params(self::getPGConnection(),$query,$params);
         $row = pg_fetch_array($result,null,PGSQL_ASSOC);
-        $usuarioFound = new UsuarioModel(
-            $row["idusuario"],
-            $row["contraseña"],
-            $row["nombre"],
-            $row["apellidos"],
-            $row["correo"],
-            $row["puesto"],
-            $row["idtipou"]
-        );
-        return $usuarioFound;
+        if($row)
+        {
+            $usuarioFound = new UsuarioModel(
+                $row["idusuario"],
+                $row["contraseña"],
+                $row["nombre"],
+                $row["apellidos"],
+                $row["correo"],
+                $row["puesto"],
+                $row["idtipou"]
+            );
+            return $usuarioFound;
+        }
+        else return [
+
+        ];
     }
 
     public function insertUsuario(UsuarioModel $usuario) : array {
@@ -124,7 +130,6 @@ class UsuarioDAO
         $params = array($usuario->getIDUsuario());
         $result = pg_query_params(self::getPGConnection(),$query,$params);
         $row = pg_fetch_array($result,null,PGSQL_ASSOC);
-        //return [var_dump($row)];
         if($row)
         {
             $usuarioFound = new UsuarioModel(
