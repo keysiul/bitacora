@@ -34,10 +34,13 @@ class TipoUsuarioDAO
         $query = "SELECT * FROM TipoUsuario WHERE idtipou = $1";
         $result = pg_query_params(self::getPGConnection(),$query,array($tipoUsuario->getIDTipoU()));
         $row = pg_fetch_array($result,null,PGSQL_ASSOC);
-        $tipoUFound = new TipoUsuarioModel(
-            $row["idtipou"],
-            $row["tipo"]
-        );
+        if($row)
+        {
+            $tipoUFound = new TipoUsuarioModel(
+                $row["idtipou"],
+                $row["tipo"]
+            );
+        } 
         return $tipoUFound;
     }
 
@@ -49,6 +52,7 @@ class TipoUsuarioDAO
         {
             return [
                 "Mensage" => "Tipo usuario added",
+                "Tipo usuario" => $tipoUsuario,
                 "Status" => true
             ];
         }
@@ -66,7 +70,8 @@ class TipoUsuarioDAO
         {
             return [
                 "Status" => true,
-                "Message" => "Tipo usuario edited"
+                "Message" => "Tipo usuario edited",
+                "Tipo usuario"=> $tipoUsuario
             ];
         }
         return [

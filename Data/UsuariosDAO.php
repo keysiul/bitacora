@@ -52,11 +52,9 @@ class UsuarioDAO
                 $row["puesto"],
                 $row["idtipou"]
             );
-            return $usuarioFound;
+            //return $usuarioFound;
         }
-        else return [
-
-        ];
+        return $usuarioFound;
     }
 
     public function insertUsuario(UsuarioModel $usuario) : array {
@@ -73,7 +71,8 @@ class UsuarioDAO
         {
             return[
                 "Message" => "Usuario added",
-                "Status" => true
+                "Status" => true,
+                "Usuario" => $usuario
             ];
         }
         return [
@@ -98,7 +97,8 @@ class UsuarioDAO
         {
             return [
                 "Status" => true,
-                "Message" => "Usuario edited"
+                "Message" => "Usuario edited",
+                "Usuario" => $usuario
             ];
         }
         return[

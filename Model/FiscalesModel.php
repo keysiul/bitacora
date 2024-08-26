@@ -93,7 +93,7 @@ class FiscalesModel implements JsonSerializable
         return $this->pais;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize() : object
     {
         return (object) get_object_vars($this);
     }

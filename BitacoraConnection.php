@@ -1,20 +1,25 @@
 <?php
+
+use Dotenv\Dotenv;
+
 require_once "Conexion.php";
 require ".secret.php";
+require_once realpath(__DIR__ . '/vendor/autoload.php');
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
-/*
-define("HOST",$dbhost);
-define("DB",$dbdatabase);
-define("USER",$dbuser);
-define("PASSWORD",$dbpassword);
-define("SCHEMA",$dbschema);
-*/
 class BitacoraConnecion
 {
     private $connection;
     public function __construct()
     {
-        $this->connection = new Conexion(HOST,DB,USER,PASSWORD,SCHEMA);
+        $this->connection = new Conexion(
+            $_ENV['DB_HOST'], 
+            $_ENV['DB_DATABASE'],
+            $_ENV['DB_USER'],
+            $_ENV['DB_PASSWORD'],
+            $_ENV['DB_SCHEMA']
+        );
     }
 
     public function getBitacoraConnection()
@@ -24,7 +29,7 @@ class BitacoraConnecion
 
     public static function getConnectionString()
     {
-        return "host=".HOST. " dbname=".DB ." user=".USER. " password=".PASSWORD.", options='--client_encoding=UTF8'";
+        return "host=".$_ENV['DB_HOST']. " dbname=".$_ENV['DB_DATABASE'] ." user=".$_ENV['DB_USER']. " password=".$_ENV['DB_PASSWORD'].", options='--client_encoding=UTF8'";
     }
     /**
      * Returns a string version of a pg_query_params query
@@ -41,11 +46,4 @@ class BitacoraConnecion
         return $debug;
     }
 }
-
-define("HOST",$dbhost);
-define("DB",$dbdatabase);
-define("USER",$dbuser);
-define("PASSWORD",$dbpassword);
-define("SCHEMA",$dbschema);
-
 ?>

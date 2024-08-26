@@ -27,7 +27,8 @@ class FiscalesDAO
         {
             return [
                 "Status" => true,
-                "Message" => "Fiscales inserted"
+                "Message" => "Fiscales inserted",
+                "Fiscales" => $fiscal 
             ];
         }
         return [
@@ -55,7 +56,8 @@ class FiscalesDAO
         {
             return [
                 "Status" => true,
-                "Message" => "Fiscales updated"
+                "Message" => "Fiscales updated",
+                "Fiscales" => $fiscal
             ];
         }
         return [
@@ -72,6 +74,7 @@ class FiscalesDAO
         $fiscalFound = null;
         $result = pg_query_params($this->conection->getBitacoraConnection()->getCon(),$query,$params);
         $row = pg_fetch_array($result,NULL,PGSQL_ASSOC);
+        if(!$row) throw new Exception("Fiscal not found");
         $fiscalFound = new FiscalesModel(
             $row["idfiscal"],
             $row["rfc"],
@@ -82,6 +85,10 @@ class FiscalesDAO
             $row["estado"],
             $row["pais"]
         );
+        if($fiscalFound==null) 
+        {
+            throw new Exception("Fiscal not found");
+        }
         return $fiscalFound;
         
     }

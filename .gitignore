@@ -1,1 +1,4 @@
 .secret.php
+vue-bitacora/
+.env
+vendor/

@@ -1,7 +1,18 @@
 <?php
 require_once "../Model/UsuarioModel.php";
 require_once "../Data/UsuariosDAO.php";
+require_once "./Auth.php";
+require_once "../Util/VerifyData.php";
 header('Content-Type: application/json');
+$auth = new Auth();
+$validToken = $auth->authenticateJWT();
+if(!$validToken)
+{
+    exit();
+}
+$allowedMethods = ["GET","POST","PUT","DELETE"];
+$validMethod = VerifyData::verifyMethods($allowedMethods);
+if(!$validMethod) exit();
 $data = json_decode(file_get_contents('php://input'));
 $usuarioDAO = new UsuarioDAO();
 
@@ -29,102 +40,60 @@ if($_SERVER["REQUEST_METHOD"] == 'GET')
         exit();
     }
 }
+$verifier = new VerifyData($data);
+if(!$verifier->emptyData()) exit();
 if($_SERVER["REQUEST_METHOD"] == 'POST')
 {
-    header("HTTP/1.1 200 OK");
-    $params = array (
-        $data->password,
+    $params = ["nombre","password","apellidos","correo","puesto","idtipou"];
+    if(!$verifier->verifyInputs($params)) exit();
+    
+    $usuario = new UsuarioModel(
+        0,
+        password_hash($data->password,PASSWORD_BCRYPT),
         $data->nombre,
         $data->apellidos,
         $data->correo,
         $data->puesto,
         $data->idtipou
     );
-    if(!isEmpty($params))
-    {
-        $usuario = new UsuarioModel(
-            0,
-            password_hash($data->password,PASSWORD_BCRYPT),
-            $data->nombre,
-            $data->apellidos,
-            $data->correo,
-            $data->puesto,
-            $data->idtipou
-        );
-        echo json_encode($usuarioDAO->insertUsuario($usuario),JSON_UNESCAPED_UNICODE);
-    }
-    else
-    {
-        echo json_encode([
-            "Status" => false,
-            "Message" => "All inputs must be filled"
-        ],JSON_UNESCAPED_UNICODE);
-    }
+    header("HTTP/1.1 200 OK");
+    echo json_encode($usuarioDAO->insertUsuario($usuario),JSON_UNESCAPED_UNICODE);
     exit();
 }
 if($_SERVER["REQUEST_METHOD"] == 'DELETE')
 {
-    header("HTTP/1.1 200 OK");
-    $params = array(
-        $data->idusario
+    $params = ["idusuario"];
+    if(!$verifier->verifyInputs($params)) exit();
+    $usuario = new UsuarioModel(
+        $data->idusuario,
+        '',
+        '',
+        '',
+        '',
+        '',
+        ''
     );
-    if(!isEmpty($params))
-    {
-        $usuario = new UsuarioModel(
-            $data->idusuario,
-            '',
-            '',
-            '',
-            '',
-            '',
-            ''
-        );
-        echo json_encode($usuarioDAO->deleteusuario($usuario),JSON_UNESCAPED_UNICODE);
-    }
-    else
-    {
-        echo json_encode([
-            "Status" => false,
-            "Message" => "All inputs must be filled"
-        ],JSON_UNESCAPED_UNICODE);
-    }
+    header("HTTP/1.1 200 OK");
+    echo json_encode($usuarioDAO->deleteusuario($usuario),JSON_UNESCAPED_UNICODE);
     exit();
 }
 if($_SERVER["REQUEST_METHOD"] == 'PUT')
 {
-    header("HTTP/1.1 200 OK");
-    $params = array(
+    $params = ["idusuario","password","nombre","apellidos","correo","puesto","idtipou"];
+    if(!$verifier->verifyInputs($params))exit();
+    $usuario = new UsuarioModel(
         $data->idusuario,
-        $data->password,
+        password_hash($data->password,PASSWORD_BCRYPT),
         $data->nombre,
         $data->apellidos,
         $data->correo,
         $data->puesto,
         $data->idtipou
     );
-    if(!isEmpty($params))
-    {
-        $usuario = new UsuarioModel(
-            $data->idusuario,
-            password_hash($data->password,PASSWORD_BCRYPT),
-            $data->nombre,
-            $data->apellidos,
-            $data->correo,
-            $data->puesto,
-            $data->idtipou
-        );
-        echo json_encode($usuarioDAO->editUsuario($usuario),JSON_UNESCAPED_UNICODE);
-    }
-    else
-    {
-        echo json_encode([
-            "Status" => false,
-            "Message" => "All inputs must be filled"
-        ],JSON_UNESCAPED_UNICODE);
-    }
+    header("HTTP/1.1 200 OK");
+    echo json_encode($usuarioDAO->editUsuario($usuario),JSON_UNESCAPED_UNICODE);
     exit();
 }
-header("HTTP/1.1 400 Bad Request");
 exit();
 
 function isEmpty(array $params) : bool{
