@@ -12,10 +12,10 @@
           </div>
       
           <!-- Login Form -->
-          <form>
-            <input type="text" id="login" class="fadeIn second" name="login" placeholder="Usuario">
-            <input type="text" id="password" class="fadeIn third" name="login" placeholder="Contraseña">
-            <input type="submit" class="fadeIn fourth" value="Iniciar Sesión">
+          <form target="#">
+            <input type="text" id="login" class="fadeIn second" v-model="usuario.idusuario" name="login" placeholder="Usuario">
+            <input type="password" id="password" class="fadeIn third" v-model="usuario.password" name="login" placeholder="Contraseña">
+            <input type="button" class="fadeIn fourth" @click="login()" value="Iniciar Sesión">
           </form>
           
           <div id="formFooter">
@@ -27,10 +27,53 @@
 </template>
 
 <script>
+//import { Axios } from 'axios'
+//import {ref} from 'vue'
 export default {
     // eslint-disable-next-line vue/multi-word-component-names
-    name: 'Login',
-  
+    name: 'Login', 
+    data(){
+      return {
+        usuario:{
+          idusuario : '',
+          password : ''
+        }
+      };
+    },
+    methods : {
+      async login() 
+      {
+        const axios = require('axios');
+        const url = 'http://159.54.136.4/bitacora/Controller/';
+        const idusuario = this.usuario.idusuario;
+        const password = this.usuario.password;
+        const data = JSON.stringify({
+          idusuario : idusuario,
+          password : password
+        });
+        let config = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: url+'LoginController.php',
+        headers: { 
+          'Content-Type': 'application/json'
+        },
+        //withCredentials: true,
+        data : data
+      };
+        try
+        {
+          let res = await axios.request(config);
+          alert("Login exitoso HDSPM");
+          console.log(res.data.token);
+        }
+        catch (error)
+        {
+          alert(error.response.data.Message);
+          console.error(error);
+        }
+      }
+    }
 }
 </script>
 
@@ -142,7 +185,7 @@ body {
     transform: scale(0.95);
   }
   
-  input[type=text] {
+  input[type=text], input[type=password] {
     background-color: #aceeff;
     border: none;
     color: #0d0d0d;

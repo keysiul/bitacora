@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "axios": "^1.7.5",
     "core-js": "^3.8.3",
     "vue": "^3.2.13"
   },
@@ -44,5 +45,4 @@
   "vetur.validation.template": false,
   "vetur.validation.script": false,
   "vetur.validation.style": false
-
 }
